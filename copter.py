@@ -201,7 +201,7 @@ client.simxGetObjectOrientation(Quadricopter_base, -1, client.simxDefaultSubscri
 client.simxGetObjectPosition(Quadricopter_base, -1, client.simxDefaultSubscriber(barometerCallback))
 
 # Initialize Remote
-#remote = Remote()
+remote = Remote()
 
 # Start Simulator
 client.simxSynchronous(True)
@@ -210,24 +210,36 @@ client.simxGetSimulationStepDone(client.simxDefaultSubscriber(simulationStepDone
 
 start = client.simxStartSimulation(client.simxDefaultPublisher())
 print(start)
+
 def remap(x, in_min, in_max, out_min, out_max):
     return((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
 
-
 startTime=time.time()
 while time.time() - startTime < 150:
-    #rcin = remote.get_input()
+    rcin = remote.get_input()
     if doNextStep:
         doNextStep = False
         # Step Begin Here
-        """
+ 
         print("Remote: ", rcin)
-        thrust = remap(rcin[2], 988, 2012, 0, 100)
-        client.simxSetFloatSignal('particleVelocity1', thrust, client.simxDefaultPublisher())
-        client.simxSetFloatSignal('particleVelocity2', thrust, client.simxDefaultPublisher())
-        client.simxSetFloatSignal('particleVelocity3', thrust, client.simxDefaultPublisher())
-        client.simxSetFloatSignal('particleVelocity4', thrust, client.simxDefaultPublisher())
-        
+        if rcin[3] > 1500:
+            thrust = remap(rcin[3], 988, 2012, 0, 10)
+            client.simxSetFloatSignal('particleVelocity1', thrust, client.simxDefaultPublisher())
+            client.simxSetFloatSignal('particleVelocity2', 0, client.simxDefaultPublisher())
+            client.simxSetFloatSignal('particleVelocity3', thrust, client.simxDefaultPublisher())
+            client.simxSetFloatSignal('particleVelocity4', 0, client.simxDefaultPublisher())
+        elif rcin[3] < 1500:
+            thrust = remap(rcin[3], 2012, 988, 0, 10)
+            client.simxSetFloatSignal('particleVelocity1', 0, client.simxDefaultPublisher())
+            client.simxSetFloatSignal('particleVelocity2', thrust, client.simxDefaultPublisher())
+            client.simxSetFloatSignal('particleVelocity3', 0, client.simxDefaultPublisher())
+            client.simxSetFloatSignal('particleVelocity4', thrust, client.simxDefaultPublisher())
+        else:
+            client.simxSetFloatSignal('particleVelocity1', 0, client.simxDefaultPublisher())
+            client.simxSetFloatSignal('particleVelocity2', 0, client.simxDefaultPublisher())
+            client.simxSetFloatSignal('particleVelocity3', 0, client.simxDefaultPublisher())
+            client.simxSetFloatSignal('particleVelocity4', 0, client.simxDefaultPublisher())
+        """
         u1 = K[0][2]*(altitude-75)/1000+K[0][5]*vertical_speed/100
         u2 = K[1][6]*(roll_deg+rollangle)/100000 + K[1][9] *(-gy)/1000000 + K[1][1]*(-ypos)/1000 + K[1][4]*y_speed/100000
         u3 = K[2][7]*(-pitch_deg+pitchangle)/100000 + K[2][10]*(-gx)/1000000 + K[2][0]*xpos/1000 + K[2][3]*x_speed/100000
