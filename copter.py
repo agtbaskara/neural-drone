@@ -178,27 +178,27 @@ client = b0RemoteApi.RemoteApiClient('b0RemoteApi_pythonClient','b0RemoteApi')
 doNextStep=True
 
 # Motor Thrust
-client.simxSetFloatSignal('particleVelocity1', 0, client.simxDefaultPublisher())
-client.simxSetFloatSignal('particleVelocity2', 0, client.simxDefaultPublisher())
-client.simxSetFloatSignal('particleVelocity3', 0, client.simxDefaultPublisher())
-client.simxSetFloatSignal('particleVelocity4', 0, client.simxDefaultPublisher())
+client.simxSetFloatSignal('F450_particleVelocity1', 0, client.simxDefaultPublisher())
+client.simxSetFloatSignal('F450_particleVelocity2', 0, client.simxDefaultPublisher())
+client.simxSetFloatSignal('F450_particleVelocity3', 0, client.simxDefaultPublisher())
+client.simxSetFloatSignal('F450_particleVelocity4', 0, client.simxDefaultPublisher())
 
 # Gyroscope
-client.simxGetFloatSignal('gyroX', client.simxDefaultSubscriber(gyroXCallback))
-client.simxGetFloatSignal('gyroY', client.simxDefaultSubscriber(gyroYCallback))
-client.simxGetFloatSignal('gyroZ', client.simxDefaultSubscriber(gyroZCallback))
+client.simxGetFloatSignal('F450_gyroX', client.simxDefaultSubscriber(gyroXCallback))
+client.simxGetFloatSignal('F450_gyroY', client.simxDefaultSubscriber(gyroYCallback))
+client.simxGetFloatSignal('F450_gyroZ', client.simxDefaultSubscriber(gyroZCallback))
 
 # Accelerometer
-client.simxGetFloatSignal('accelerometerX', client.simxDefaultSubscriber(accelerometerXCallback))
-client.simxGetFloatSignal('accelerometerY', client.simxDefaultSubscriber(accelerometerYCallback))
-client.simxGetFloatSignal('accelerometerZ', client.simxDefaultSubscriber(accelerometerZCallback))
+client.simxGetFloatSignal('F450_accelerometerX', client.simxDefaultSubscriber(accelerometerXCallback))
+client.simxGetFloatSignal('F450_accelerometerY', client.simxDefaultSubscriber(accelerometerYCallback))
+client.simxGetFloatSignal('F450_accelerometerZ', client.simxDefaultSubscriber(accelerometerZCallback))
 
 # Orientation
-_, Quadricopter_base = client.simxGetObjectHandle('Quadricopter_base', client.simxServiceCall())
-client.simxGetObjectOrientation(Quadricopter_base, -1, client.simxDefaultSubscriber(orientationCallback))
+_, F450 = client.simxGetObjectHandle('F450', client.simxServiceCall())
+client.simxGetObjectOrientation(F450, -1, client.simxDefaultSubscriber(orientationCallback))
 
 # Barometer
-client.simxGetObjectPosition(Quadricopter_base, -1, client.simxDefaultSubscriber(barometerCallback))
+client.simxGetObjectPosition(F450, -1, client.simxDefaultSubscriber(barometerCallback))
 
 # Initialize Remote
 remote = Remote()
@@ -220,25 +220,13 @@ while time.time() - startTime < 150:
     if doNextStep:
         doNextStep = False
         # Step Begin Here
- 
-        print("Remote: ", rcin)
-        if rcin[3] > 1500:
-            thrust = remap(rcin[3], 988, 2012, 0, 10)
-            client.simxSetFloatSignal('particleVelocity1', thrust, client.simxDefaultPublisher())
-            client.simxSetFloatSignal('particleVelocity2', 0, client.simxDefaultPublisher())
-            client.simxSetFloatSignal('particleVelocity3', thrust, client.simxDefaultPublisher())
-            client.simxSetFloatSignal('particleVelocity4', 0, client.simxDefaultPublisher())
-        elif rcin[3] < 1500:
-            thrust = remap(rcin[3], 2012, 988, 0, 10)
-            client.simxSetFloatSignal('particleVelocity1', 0, client.simxDefaultPublisher())
-            client.simxSetFloatSignal('particleVelocity2', thrust, client.simxDefaultPublisher())
-            client.simxSetFloatSignal('particleVelocity3', 0, client.simxDefaultPublisher())
-            client.simxSetFloatSignal('particleVelocity4', thrust, client.simxDefaultPublisher())
-        else:
-            client.simxSetFloatSignal('particleVelocity1', 0, client.simxDefaultPublisher())
-            client.simxSetFloatSignal('particleVelocity2', 0, client.simxDefaultPublisher())
-            client.simxSetFloatSignal('particleVelocity3', 0, client.simxDefaultPublisher())
-            client.simxSetFloatSignal('particleVelocity4', 0, client.simxDefaultPublisher())
+
+        throttle = remap(rcin[2], 988, 2012, 0, 10)
+        client.simxSetFloatSignal('F450_particleVelocity1', throttle, client.simxDefaultPublisher())
+        client.simxSetFloatSignal('F450_particleVelocity2', throttle, client.simxDefaultPublisher())
+        client.simxSetFloatSignal('F450_particleVelocity3', throttle, client.simxDefaultPublisher())
+        client.simxSetFloatSignal('F450_particleVelocity4', throttle, client.simxDefaultPublisher())
+        
         """
         u1 = K[0][2]*(altitude-75)/1000+K[0][5]*vertical_speed/100
         u2 = K[1][6]*(roll_deg+rollangle)/100000 + K[1][9] *(-gy)/1000000 + K[1][1]*(-ypos)/1000 + K[1][4]*y_speed/100000
