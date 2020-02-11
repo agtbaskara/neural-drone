@@ -1,7 +1,7 @@
 import serial
 import pynmea2
  
-port = "/dev/ttyAMA1"
+port = "/dev/ttyAMA2"
  
 def parseGPS(str):
     if str.find('GGA') > 0:

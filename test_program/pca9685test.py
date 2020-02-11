@@ -24,12 +24,13 @@ print(duty_range)
 print(min_duty)
 print(max_duty)
 
-value = 0
-duty_cycle = min_duty + int(value * duty_range)
-pca.channels[0].duty_cycle = duty_cycle
-pca.channels[1].duty_cycle = duty_cycle
-pca.channels[2].duty_cycle = duty_cycle
-pca.channels[3].duty_cycle = duty_cycle
+while True:
+    value = 1
+    duty_cycle = min_duty + int(value * duty_range)
+    pca.channels[0].duty_cycle = duty_cycle
+    pca.channels[1].duty_cycle = duty_cycle
+    pca.channels[2].duty_cycle = duty_cycle
+    pca.channels[3].duty_cycle = duty_cycle
 
 # Konversi PWM ke duty cycle
 #pwm = 988
